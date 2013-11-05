@@ -43,7 +43,7 @@
   (cond ((or (not(tabuleiro-moeda-posicao tabuleiro posicao)) (eq(tabuleiro-moedas tabuleiro) NIL))
 	 (cons valor posicao))
 	(T (dolist (el moedas)
-	      (cond ((posicoes-iguais-p (cdr el) posicao) (setcar el valor))))))))
+	      (cond ((posicoes-iguais-p (cdr el) posicao) (setf (car el) valor))))))))
 
 (defun tabuleiro-remove-fio-com-id! (tabuleiro id)
   (remove (tabuleiro-fio-com-id tabuleiro id) (tabuleiro-fios tabuleiro)))
