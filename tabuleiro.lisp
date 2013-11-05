@@ -39,9 +39,10 @@
   (cons tmp (tabuleiro-fios tabuleiro))))
 
 (defun tabuleiro-adiciona-moeda-posicao! (tabuleiro posicao valor)
-  (cond ((not(tabuleiro-moeda-posicao tabuleiro posicao))
-	 (cons valor posicao)
-	 (T (dolist (el (tabuleiro-moeadas tabuleiro))
+  (let ((moedas (tabuleiro-moedas tabuleiro)))
+  (cond ((or (not(tabuleiro-moeda-posicao tabuleiro posicao)) (eq(tabuleiro-moedas tabuleiro) NIL))
+	 (cons valor posicao))
+	(T (dolist (el moedas)
 	      (cond ((posicoes-iguais-p (cdr el) posicao) (setcar el valor))))))))
 
 (defun tabuleiro-remove-fio-com-id! (tabuleiro id)
