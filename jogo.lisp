@@ -1,4 +1,4 @@
-(load "tabuleiro.lisp")
+(load (compile-file "tabuleiro.lisp"))
 
 (defstruct jogo tabuleiro jogador pontos-jogador1 pontos-jogador2 historico-jogadas)
 

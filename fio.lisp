@@ -1,4 +1,4 @@
-(load "posicao.lisp")
+(load (compile-file "posicao.lisp"))
 
 (defstruct fio id origem destino)
 
