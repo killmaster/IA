@@ -14,25 +14,27 @@
 	  ))))
 
 (defun tabuleiro-fio-posicao (tabuleiro posicao)
-  (let tmp '())
+  (let (tmp '()))
   (dolist (el (tabuleiro-fios tabuleiro) res)
     (cond ((or (posicoes-iguais-p posicao (fio-origem el)) 
 	       (posicoes-iguais-p posicao (fio-destino el))) 
 	  (cons el tmp) (setf res tmp)
-	  )))
+	  ))))
 
 (defun tabuleiro-moeda-posicao (tabuleiro posicao)
+  (let (res)
   (dolist (el (tabuleiro-moedas tabuleiro) res)
-    (cond ((posicoes-iguais-p posicao (cdr el))) (setf res (car el)))))
+    (cond ((posicoes-iguais-p posicao (cdr el))) (setf res (car el))))))
 
 (defun tabuleiro-total-moedas (tabuleiro)
+  (let (res)
   (dolist (el (tabuleiro-moedas tabuleiro) res)
-    (incf res (car el))))
+    (incf res (car el)))))
 
 (defun tabuleiro-adiciona-fio! (tabuleiro pos1 pos2)
-  (let acc 1)
+  (let (acc 1)
   (setf tmp (cria-fio acc pos1 pos2))
-  (cons tmp (tabuleiro-fios tabuleiro)))
+  (cons tmp (tabuleiro-fios tabuleiro))))
 
 (defun tabuleiro-adiciona-moeda-posicao! (tabuleiro posicao valor)
   (cond ((not(tabuleiro-moeda-posicao tabuleiro posicao))
