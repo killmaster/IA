@@ -14,4 +14,7 @@
   (jogo-terminado-p jogo))
 
 (defun utilidade (jogo jogador)
-  (problema-funcao-avaliacao jogo jogador))
+  (let ((res))
+  (cond ((= jogador 1)
+	 (setf res (- (jogo-pontos-jogador1 jogo) (jogo-pontos-jogador2 jogo))))
+	(T (setf res (- (jogo-pontos-jogador2 jogo) (jogo-pontos-jogador1 jogo)))))))
