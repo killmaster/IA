@@ -178,8 +178,10 @@
       (setf res (nconc res (list (fio-id el)))))))
 
 (defun resultado (jogo id)
-  (let ((res (copia-jogo jogo)))
-    (jogo-aplica-jogada! res id)))
+    (let ((res (copia-jogo jogo)))
+      (jogo-aplica-jogada! res id)
+      res))
+    
 
 (defun teste-terminal-p (jogo prof)
   (declare (ignore prof))
