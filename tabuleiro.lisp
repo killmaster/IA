@@ -6,7 +6,7 @@
   (make-tabuleiro :linhas linhas :colunas colunas :fios fios :moedas moedas))
 
 (defun copia-tabuleiro (tabuleiro)
-  (cria-tabuleiro (tabuleiro-linhas tabuleiro) (tabuleiro-colunas tabuleiro) (mapcar #'copy-structure (tabuleiro-fios tabuleiro)) (mapcar #'copy-structure (tabuleiro-moedas tabuleiro))))
+  (cria-tabuleiro (tabuleiro-linhas tabuleiro) (tabuleiro-colunas tabuleiro) (mapcar #'copy-structure (tabuleiro-fios tabuleiro)) (mapcar #'copy-list (tabuleiro-moedas tabuleiro))))
 
 (defun tabuleiro-fio-com-id (tabuleiro id)
   (let ((res))
@@ -14,14 +14,13 @@
     (cond ((= id (fio-id res)) (setf res el)
 	  )))))
 
-(defun tabuleiro-fio-posicao (tabuleiro posicao)
+(defun tabuleiro-fios-posicao (tabuleiro posicao)
   (let ((res)
 	(tmp '()))
   (dolist (el (tabuleiro-fios tabuleiro) res)
     (cond ((or (posicoes-iguais-p posicao (fio-origem el)) 
-	       (posicoes-iguais-p posicao (fio-destino el))) 
-	  (cons el tmp) (setf res tmp)
-	  )))))
+	       (posicoes-iguais-p posicao (fio-destino el)))
+	   (setf res (nconc res el)))))))
 
 (defun tabuleiro-moeda-posicao (tabuleiro posicao)
   (let ((res))
@@ -36,17 +35,17 @@
 (defun tabuleiro-adiciona-fio! (tabuleiro pos1 pos2)
   (let ((acc 1) (tmp))
   (setf tmp (cria-fio acc pos1 pos2))
-  (cons tmp (tabuleiro-fios tabuleiro))))
+  (setf (tabuleiro-fios tabuleiro) (nconc (tabuleiro-fios tabuleiro) (list tmp)))))
 
 (defun tabuleiro-adiciona-moeda-posicao! (tabuleiro posicao valor)
-  (let ((moedas (tabuleiro-moedas tabuleiro)))
+ ; (let ((moedas (tabuleiro-moedas tabuleiro)))
   (cond ((or (not(tabuleiro-moeda-posicao tabuleiro posicao)) (eq(tabuleiro-moedas tabuleiro) NIL))
-	 (cons valor posicao))
+	 (setf (tabuleiro-moedas tabuleiro) (cons valor posicao)))
 	(T (dolist (el moedas)
-	      (cond ((posicoes-iguais-p (cdr el) posicao) (setf (car el) valor))))))))
+	      (cond ((posicoes-iguais-p (cdr el) posicao) (setf (car el) valor)))))))
 
 (defun tabuleiro-remove-fio-com-id! (tabuleiro id)
-  (remove (tabuleiro-fio-com-id tabuleiro id) (tabuleiro-fios tabuleiro)))
+  (setf (tabuleiro-fios tabuleiro) (remove (tabuleiro-fio-com-id tabuleiro id) (tabuleiro-fios tabuleiro))))
 
 (defun tabuleiro-remove-moeda-posicao! (tabuleiro posicao)
-  (remove (tabuleiro-moeda-posicao tabuleiro posicao) (tabuleiro-moedas tabuleiro)))
+  (setf (tabuleiro-moedas tabuleiro) (remove (tabuleiro-moeda-posicao tabuleiro posicao) (tabuleiro-moedas tabuleiro))))

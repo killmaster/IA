@@ -1,3 +1,20 @@
+;; acrescentei algumas funcoes auxiliares que vao dar jeito para testar automaticamente o codigo dos alunos
+(defun ignore-value (x)
+	(declare (ignore x))
+	NIL)
+	
+;; dois fios sao iguais se tem o mesmo id, a mesma origem e o mesmo destino
+(defun fios-iguais-p (f1 f2)
+	(and (equal (fio-id f1) (fio-id f2))
+		 (posicoes-iguais-p (fio-origem f1) (fio-origem f2))
+		 (posicoes-iguais-p (fio-destino f1) (fio-destino f2))))
+		 
+;; muito dificil fazer esta funcao... :D
+(defun conjuntos-iguais-p (l1 l2 &key (test #'equal))
+	(and (null (set-difference l1 l2 :test test))
+		 (null (set-difference l2 l1 :test test))))
+		 
+
 ;;; joga: tabuleiro x funcao x funcao x inteiro --> inteiro
 ;;; funcao que recebe um tabuleiro; duas funcoes correspondentes a jogadores, i.e. funcoes que recebem um jogo e um id de jogador e devolvem 
 ;;; uma jogada; e um inteiro opcional que representa o tempo limite (em segundos) que cada jogador tem para tomar uma decisao (se nao for especificado
@@ -133,7 +150,7 @@
 ;;; que corresponde a diferenca entre o destino e a origem. O vector retornado
 ;;; e representado tambem atraves de uma posicao
 (defun obtem-vector (pOrigem pDestino)
-	(cons (- (posicao-linha pDestino) (posicao-linha pOrigem))
+	(cria-posicao (- (posicao-linha pDestino) (posicao-linha pOrigem))
 		  (- (posicao-coluna pDestino) (posicao-coluna pOrigem))))
  
 ;;;	calcula-id-fios-a-imprimir: inteiro positivo x inteiro positivo x lista --> lista			  
