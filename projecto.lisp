@@ -109,7 +109,7 @@
   (make-jogo :tabuleiro tabuleiro :jogador jogador :pontos-jogador1 pontos-jogador1 :pontos-jogador2 pontos-jogador2 :historico-jogadas historico-jogadas))
 
 (defun copia-jogo (jogo)
-  (cria-jogo (copia-tabuleiro (jogo-tabuleiro jogo)) (jogo-jogador jogo) (jogo-pontos-jogador1 jogo) (jogo-pontos-jogador2 jogo) (mapcar #'copy-structure (jogo-historico-jogadas jogo))))
+  (cria-jogo (copia-tabuleiro (jogo-tabuleiro jogo)) (jogo-jogador jogo) (jogo-pontos-jogador1 jogo) (jogo-pontos-jogador2 jogo) (copy-list (jogo-historico-jogadas jogo))))
 
 ;;; Verificar se existe fio,
 ;;; Remover fio,
@@ -178,9 +178,9 @@
       (setf res (nconc res (list (fio-id el)))))))
 
 (defun resultado (jogo id)
-    (let ((res (copia-jogo jogo)))
-      (jogo-aplica-jogada! res id)
-      res))
+  (let ((res (copia-jogo jogo)))
+    (jogo-aplica-jogada! res id)
+    res))
     
 
 (defun teste-terminal-p (jogo prof)
