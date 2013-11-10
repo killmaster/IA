@@ -175,7 +175,8 @@
 (defun accoes (jogo)
   (let ((res))
     (dolist (el (tabuleiro-fios (jogo-tabuleiro jogo)) res)
-      (setf res (nconc res (list (fio-id el)))))))
+      (setf res (nconc res (list (fio-id el)))))
+    (setf res (reverse res))))
 
 (defun resultado (jogo id)
   (let ((res (copia-jogo jogo)))
@@ -192,6 +193,52 @@
   (cond ((= jogador 1)
 	 (setf res (- (jogo-pontos-jogador1 jogo) (jogo-pontos-jogador2 jogo))))
 	(T (setf res (- (jogo-pontos-jogador2 jogo) (jogo-pontos-jogador1 jogo)))))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;                     ;;;
+;;;       Minimax       ;;;
+;;;                     ;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;
+#|
+(defun minimax (problema jogador)
+  (min-value problema jogador))
+
+(defun min-value (problema jogador)
+  (if (teste-terminal-p (problema-estado-inicial problema) NIL)
+      (utilidade (problema-estado-inicial problema) (problema-jogador problema))
+    (let ((v #.MOST-NEGATIVE-FIXNUM))
+      (dolist (a (accoes (problema-estado-inicial problema)) v)
+	(setf (problema-estado-inicial problema) (resultado (problema-estado-inicial problema) a))
+	(break)
+	(setf v (min v (max-value problema jogador)))))))
+
+(defun max-value (problema jogador)
+  (if (teste-terminal-p (problema-estado-inicial problema) NIL)
+      (utilidade (problema-estado-inicial problema) (problema-jogador problema))
+    (let ((v #.MOST-POSITIVE-FIXNUM))
+      (dolist (a (accoes (problema-estado-inicial problema)) v)
+	(setf (problema-estado-inicial problema) (resultado (problema-estado-inicial problema) a))
+	(setf v (max v (min-value problema jogador)))))))
+|#
+(defun minimax (problema jogador)
+  (let ((bestValue) (val) (acc 0))
+  (if (teste-terminal-p (problema-estado-inicial problema) NIL)
+      (values (first (accoes (problema-estado-inicial problema))) (utilidade (problema-estado-inicial problema) jogador) acc)
+    (if (eq jogador (problema-jogador problema))
+	(progn (setf bestValue #.MOST-NEGATIVE-FIXNUM)
+	       (dolist (el (accoes (problema-estado-inicial problema)) val)
+		 (setf (problema-estado-inicial problema) (resultado (problema-estado-inicial problema) el))
+		 (setf val (second (multiple-value-list (minimax problema jogador))))
+		 (setf bestValue (max bestValue val))
+		 (incf acc 1))
+	       bestValue)
+      (progn (setf bestValue #.MOST-POSITIVE-FIXNUM)
+	     (dolist (el (accoes (problema-estado-inicial problema)) val)
+	       (setf (problema-estado-inicial problema) (resultado (problema-estado-inicial problema) el))
+	       (setf val (second (multiple-value-list (minimax problema jogador))))
+	       (setf bestValue (min bestValue val))
+	       (incf acc 1))
+	      bestValue)))))
 
 (load "interface-moedas.fas")
 (load "exemplos.fas")
