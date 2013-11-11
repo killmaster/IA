@@ -164,7 +164,7 @@
   teste-corte-p
   funcao-avaliacao
   historico-accoes
-  chaves-equivalencia)
+  chave-equivalencia)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;                     ;;;
@@ -200,24 +200,58 @@
 ;;;                     ;;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;  
 
+(defvar terminais 0)
+
 (defun minimax (problema jogador)
-  (min-value problema (problema-estado-inicial problema) jogador 0))
+  (values (min-value problema (problema-estado-inicial problema) jogador) terminais))
+ ; (values 5 14 40320))
 
-(defun min-value (problema estado jogador terminais)
-  (if (teste-terminal-p estado NIL) 
-      (utilidade estado (funcall (problema-jogador problema) estado))
-    (let ((v #.MOST-POSITIVE-FIXNUM))
-      (dolist (a (accoes estado) v)
-	(setf v (min v (max-value problema (resultado estado a) jogador terminais)))
-	(format t "min ~D~%terminais ~D~%" v terminais)))))
+(defun min-value (problema estado jogador)
+  (cond ((teste-terminal-p estado NIL)
+	 (incf terminais)
+	 (format t "terminais ~D~%" terminais)
+	 (print (values (utilidade estado (funcall (problema-jogador problema) estado)) terminais))
+	 (values (utilidade estado (funcall (problema-jogador problema) estado)) terminais))
+	(T (let ((v #.MOST-POSITIVE-FIXNUM))
+	     (dolist (a (accoes estado) v)
+	       (setf v (min v (max-value problema (resultado estado a) jogador))))))))
 
-(defun max-value (problema estado jogador terminais)
+(defun max-value (problema estado jogador)
+  (cond ((teste-terminal-p estado NIL)
+	 (format t "terminais ~D~%" terminais)
+	 (incf terminais)
+	 (print (values (utilidade estado (funcall (problema-jogador problema) estado)) terminais))
+	 (values (utilidade estado (funcall (problema-jogador problema) estado)) terminais))
+	(T (let ((v #.MOST-NEGATIVE-FIXNUM))
+	     (dolist (a (accoes estado) v)
+	       (setf v (max v (min-value problema (resultado estado a) jogador))))))))
+
+
+#|
+(defun minimax (problema jogador)
+  (let ((bestValue 0) (val) (acc 0) (estado (problema-estado-inicial problema)))
   (if (teste-terminal-p estado NIL)
-       (utilidade estado (funcall (problema-jogador problema) estado))
-    (let ((v #.MOST-NEGATIVE-FIXNUM))
-      (dolist (a (accoes estado) v)
-	(setf v (max v (min-value problema (resultado estado a) jogador terminais)))
-	(format t "max ~D~%terminais ~D~%" v terminais )))))
+      (values (first (problema-historico-accoes problema)) bestValue acc)
+    (if (eq jogador (funcall (problema-jogador problema) estado))
+        (progn (setf bestValue #.MOST-NEGATIVE-FIXNUM)
+               (dolist (el (accoes estado) val)
+                 (setf estado (resultado estado el))
+		 (print "max")
+                 (setf val (second (multiple-value-list (minimax problema jogador))))
+                 (setf bestValue (max bestValue val))
+		 (print "max")
+                 (incf acc 1))
+               (values (first (accoes estado)) bestValue acc))
+      (progn (setf bestValue #.MOST-POSITIVE-FIXNUM)
+             (dolist (el (accoes estado) val)
+               (setf estado (resultado estado el))
+	       (print "min")
+               (setf val (second (multiple-value-list (minimax problema jogador))))
+               (setf bestValue (min bestValue val))
+	       (print "min")
+               (incf acc 1))
+              (values (first (accoes estado)) bestValue acc))))))
+|#
 
 (load "interface-moedas.fas")
 (load "exemplos.fas")
