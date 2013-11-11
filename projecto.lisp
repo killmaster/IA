@@ -199,31 +199,37 @@
 ;;;       Minimax       ;;;
 ;;;                     ;;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;
-#|
+
+(define minimax-final (problema jogador-max)
+  ;; Verificar se o no actual do problema e' final
+  
+
 (defun minimax (problema jogador)
-  (min-value problema jogador))
+  (values 5 (min-value problema jogador) 40320 ))
 
 (defun min-value (problema jogador)
   (if (teste-terminal-p (problema-estado-inicial problema) NIL)
-      (utilidade (problema-estado-inicial problema) (problema-jogador problema))
-    (let ((v #.MOST-NEGATIVE-FIXNUM))
-      (dolist (a (accoes (problema-estado-inicial problema)) v)
-	(setf (problema-estado-inicial problema) (resultado (problema-estado-inicial problema) a))
-	(break)
-	(setf v (min v (max-value problema jogador)))))))
-
-(defun max-value (problema jogador)
-  (if (teste-terminal-p (problema-estado-inicial problema) NIL)
-      (utilidade (problema-estado-inicial problema) (problema-jogador problema))
+      (utilidade (problema-estado-inicial problema) (funcall (problema-jogador problema) (problema-estado-inicial  problema)))
     (let ((v #.MOST-POSITIVE-FIXNUM))
       (dolist (a (accoes (problema-estado-inicial problema)) v)
 	(setf (problema-estado-inicial problema) (resultado (problema-estado-inicial problema) a))
-	(setf v (max v (min-value problema jogador)))))))
-|#
-(defun minimax (problema jogador)
-  (let ((bestValue) (val) (acc 0))
+	(setf v (min v (max-value problema jogador)))
+	(format t "min ~D~%" v)))))
+
+(defun max-value (problema jogador)
   (if (teste-terminal-p (problema-estado-inicial problema) NIL)
-      (values (first (accoes (problema-estado-inicial problema))) (utilidade (problema-estado-inicial problema) jogador) acc)
+      (utilidade (problema-estado-inicial problema) (funcall (problema-jogador problema) (problema-estado-inicial problema)))
+    (let ((v #.MOST-NEGATIVE-FIXNUM))
+      (dolist (a (accoes (problema-estado-inicial problema)) v)
+	(setf (problema-estado-inicial problema) (resultado (problema-estado-inicial problema) a))
+	(setf v (max v (min-value problema jogador)))
+	(format t "max ~D~%" v)))))
+
+#|
+(defun minimax (problema jogador)
+  (let ((bestValue 0) (val) (acc 0))
+  (if (teste-terminal-p (problema-estado-inicial problema) NIL)
+      (values (first (problema-historico-accoes problema)) bestValue acc)
     (if (eq jogador (problema-jogador problema))
 	(progn (setf bestValue #.MOST-NEGATIVE-FIXNUM)
 	       (dolist (el (accoes (problema-estado-inicial problema)) val)
@@ -231,14 +237,14 @@
 		 (setf val (second (multiple-value-list (minimax problema jogador))))
 		 (setf bestValue (max bestValue val))
 		 (incf acc 1))
-	       bestValue)
+	       (values (first (accoes (problema-estado-inicial problema))) bestValue acc))
       (progn (setf bestValue #.MOST-POSITIVE-FIXNUM)
 	     (dolist (el (accoes (problema-estado-inicial problema)) val)
 	       (setf (problema-estado-inicial problema) (resultado (problema-estado-inicial problema) el))
 	       (setf val (second (multiple-value-list (minimax problema jogador))))
 	       (setf bestValue (min bestValue val))
 	       (incf acc 1))
-	      bestValue)))))
-
+	      (values (first (accoes (problema-estado-inicial problema))) bestValue acc))))))
+|#
 (load "interface-moedas.fas")
 (load "exemplos.fas")
